@@ -1,13 +1,18 @@
-﻿function Get_User_Name{
-    $name = Read-Host "请输入您的名字";
-    "用户名字";
-    $name;
+﻿function Get_Asset_Number{
+    $Number = Read-Host "请输入贴在您电脑上的资产编号(eg：HC-PC0001)";
+    return $Number;
+}
+function Get_User_CN_Name{
+    $CN_name = Read-Host "请输入您的中文名字(eg:王德发)，输入完成后回车";
+    "中文名字：";
+    $CN_name;
+}
+function Get_User_EN_Name{
+    $EN_name = Read-Host "请输入您的英文名字(eg:Nacy Wang)，输入完成后回车";
+    "英文名字：";
+    $EN_name;
 }
 
-function Get_Asset_Number{
-    $Number = Read-Host "请输入贴在您电脑上的资产编号，例如：HC-PC0001";
-    return $Number
-}
 function Get_Cpu_Information{
     $Cpu_name = (Get-WmiObject -class Win32_processor).Name;
     "CPU信息：";
@@ -18,56 +23,55 @@ function Get_Mother_board_Infotmation{
     $Mother_board_facturer = (Get-WMIObject -Class Win32_Baseboard).Manufacturer;
     $Mother_board_product = (Get-WMIObject -Class Win32_Baseboard).Product;
     "主板信息：";
-    $Mother_board_facturer;
-    $Mother_board_product;
+    "$Mother_board_facturer $Mother_board_product";
 }
 
 function Get_Mem_Information{
-    $Mem_Count = ((Get-WmiObject -Class Win32_PhysicalMemory)| Measure-Object -sum Capacity).count
+    $Mem_Count = ((Get-WmiObject -Class Win32_PhysicalMemory)| Measure-Object -sum Capacity).count;
     if ($Mem_Count -eq 1){
         $i = $Mem_Count-1;
-        $Mem_Space = (Get-WmiObject -Class Win32_PhysicalMemory).Capacity
-        $Men_Manufacturer = (Get-WmiObject -Class Win32_PhysicalMemory).Manufacturer 
+        $Mem_Space = (Get-WmiObject -Class Win32_PhysicalMemory).Capacity;
+        $Men_Manufacturer = (Get-WmiObject -Class Win32_PhysicalMemory).Manufacturer;
         $Mem_Space_GB = "{0:N2}GB" -f (($Mem_Space | Measure-Object -Sum).sum /1gb);
         "内存信息：";
-        "Mem$i"
-        $Men_Manufacturer
-        $Mem_Space_GB
+        "Mem$i";
+        $Men_Manufacturer;
+        $Mem_Space_GB;
     }
     else{
         "内存信息：";
         for ($i=0;$i -le $Mem_Count-1;$i++){
-            $Mem_Space = (Get-WmiObject -Class Win32_PhysicalMemory)[$i].Capacity
-            $Men_Manufacturer = (Get-WmiObject -Class Win32_PhysicalMemory)[$i].Manufacturer
+            $Mem_Space = (Get-WmiObject -Class Win32_PhysicalMemory)[$i].Capacity;
+            $Men_Manufacturer = (Get-WmiObject -Class Win32_PhysicalMemory)[$i].Manufacturer;
             $Mem_Space_GB = "{0:N2}GB" -f (($Mem_Space | Measure-Object -Sum).sum /1gb);
-            "Mem$i"
-            $Men_Manufacturer
-            $Mem_Space_GB
+            "Mem$i";
+            $Men_Manufacturer;
+            $Mem_Space_GB;
         }
     }
 }
 
 function Get_Disk_Information{
-    $Disk_Count = ((Get-WmiObject -Class Win32_DiskDrive)| Measure-Object -sum Partitions).count
+    $Disk_Count = ((Get-WmiObject -Class Win32_DiskDrive)| Measure-Object -sum Partitions).count;
     if ($Disk_Count -eq 1){
         $i = $Disk_Count-1;
-        $Disk_Space = (Get-WmiObject -Class Win32_DiskDrive).Size
-        $Disk_Model = (Get-WmiObject -Class Win32_DiskDrive).Model 
+        $Disk_Space = (Get-WmiObject -Class Win32_DiskDrive).Size;
+        $Disk_Model = (Get-WmiObject -Class Win32_DiskDrive).Model;
         $Disk_Space_GB = "{0:N2}GB" -f (($Disk_Space | Measure-Object -Sum).sum /1gb);
         "硬盘信息：";
-        "Disk$i"
-        $Disk_Model
-        $Disk_Space_GB
+        "Disk$i";
+        $Disk_Model;
+        $Disk_Space_GB;
     }
     else{
         "硬盘信息：";
         for ($i=0;$i -le $Disk_Count-1;$i++){
-            $Disk_Space = (Get-WmiObject -Class Win32_DiskDrive)[$i].Size
-            $Disk_Model = (Get-WmiObject -Class Win32_DiskDrive)[$i].Model
+            $Disk_Space = (Get-WmiObject -Class Win32_DiskDrive)[$i].Size;
+            $Disk_Model = (Get-WmiObject -Class Win32_DiskDrive)[$i].Model;
             $Disk_Space_GB = "{0:N2}GB" -f (($Disk_Space | Measure-Object -Sum).sum /1gb);
-            "Disk$i"
-            $Disk_Model
-            $Disk_Space_GB
+            "Disk$i";
+            $Disk_Model;
+            $Disk_Space_GB;
         }
     }
 }
@@ -76,7 +80,7 @@ function Get_Network_Adapter_Infotmation{
     $Network_Adapter_Count =((Get-WmiObject -class win32_NetworkAdapterConfiguration -Filter 'ipenabled = "true"').Description| Measure-Object).count;
     $inf = (Get-WmiObject -class win32_NetworkAdapterConfiguration -Filter 'ipenabled = "true"');
     if ($Network_Adapter_Count -eq 0){
-        Read-Host "你没有连接到网络,请连接到网络后重新运行此脚本,按任意键退出" ;
+        Read-Host "你没有连接到网络,请连接到网络后重新运行此脚本,按任意键退出";
         exit
     }
     elseif ($Network_Adapter_Count -eq 1){
@@ -104,15 +108,41 @@ function Get_Gpu_Information{
 }
 
 function Get_Monitor_Infotmation{
-    "显示器信息：";
-    $A= ((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName | ForEach {[char]$_}) -join "" ;
-    $A;
-    $B= ((Get-WmiObject WmiMonitorID -Namespace root\wmi).UserFriendlyName | ForEach {[char]$_}) -join "";
-    $B;
+    $Monitor_ManufacturerName_Ascii_Count = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName).count;
+    $Monitor_Model_Ascii_Count = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).UserFriendlyName).count;
+    if ($Monitor_ManufacturerName_Ascii_Count -eq 16){
+        "显示器信息：";
+        "Monitor0";
+        $Monitor_ManufacturerName = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName | ForEach {[char]$_}) -join "";
+        $Monitor_Model = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).UserFriendlyName | ForEach {[char]$_}) -join "";
+        $Monitor_ManufacturerName;
+        $Monitor_Model;
+    }
+    elseif ($Monitor_ManufacturerName_Ascii_Count -gt 16) {
+        "显示器信息：";
+        $Monitor_Count = 2
+        $Monitor_Count_ManufacturerName_Begin = 0;
+        $Monitor_Count_ManufacturerName_Last = ($Monitor_ManufacturerName_Ascii_Count/$Monitor_Count)-1;
+        $Monitor_Count_Model_Begin = 0;
+        $Monitor_Count_Model_Last = ($Monitor_Model_Ascii_Count/$Monitor_Count)-1;
+        for($i=0;$i -le $Monitor_Count-1;$i++){    
+            $Monitor_ManufacturerName =((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName[$Monitor_Count_ManufacturerName_Begin..$Monitor_Count_ManufacturerName_Last] | ForEach {[char]$_}) -join "";
+            $Monitor_Model = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).UserFriendlyName[$Monitor_Count_Model_Begin..$Monitor_Count_Model_Last] | ForEach {[char]$_}) -join "";
+            "Monitor$i";
+            $Monitor_ManufacturerName;
+            $Monitor_Model;
+            $Monitor_Count_ManufacturerName_Begin = $Monitor_Count_ManufacturerName_Last+1;
+            $Monitor_Count_ManufacturerName_Last = $Monitor_ManufacturerName_Ascii_Count;
+            $Monitor_Count_Model_Begin = $Monitor_Count_Model_Last+1;
+            $Monitor_Count_Model_Last = $Monitor_Model_Ascii_Count;
+
+        }
+    }
 }
 
-$title = Get_Asset_Number
-Get_User_Name |Out-File ./$title'.txt';
+$title = Get_Asset_Number;
+Get_User_CN_Name |Out-File ./$title'.txt';
+Get_User_EN_Name |Out-File -Append ./$title'.txt';
 Get_Cpu_Information |Out-File  -Append ./$title'.txt';
 Get_Mother_board_Infotmation |Out-File  -Append ./$title'.txt';
 Get_Mem_Information |Out-File  -Append ./$title'.txt';
@@ -122,8 +152,8 @@ Get_Gpu_Information |Out-File  -Append ./$title'.txt';
 Get_Monitor_Infotmation |Out-File  -Append ./$title'.txt';
 
 "电脑信息已获取完成，信息文件已保存在$title.txt中";
-Copy-Item .\$title'.txt' -destination \\192.168.17.40\information
+Copy-Item .\$title'.txt' -destination \\192.168.17.40\information;
 "$title.txt已复制到\\192.168.17.40\information中";
 "非常感谢您的配合";
-Read-Host "按任意键退出" ;
+Read-Host "按任意键退出";
 exit 
