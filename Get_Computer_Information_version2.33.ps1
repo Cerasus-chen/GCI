@@ -2,11 +2,13 @@
     $Number = Read-Host "请输入贴在您电脑上的资产编号(eg：HC-PC0001)";
     return $Number;
 }
+
 function Get_User_CN_Name{
     $CN_name = Read-Host "请输入您的中文名字(eg:王德发)，输入完成后回车";
     "中文名字：";
     $CN_name;
 }
+
 function Get_User_EN_Name{
     $EN_name = Read-Host "请输入您的英文名字(eg:Nacy Wang)，输入完成后回车";
     "英文名字：";
@@ -108,7 +110,7 @@ function Get_Gpu_Information{
 }
 
 function Get_Monitor_Infotmation{
-    $Monitor_Count = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).Active).count;
+    $Monitor_Count = (Get-WmiObject WmiMonitorID -Namespace root\wmi -Filter 'Active = "true"').count;
     if ($Monitor_Count -eq 1){
         "显示器信息：";
         "Monitor0";
