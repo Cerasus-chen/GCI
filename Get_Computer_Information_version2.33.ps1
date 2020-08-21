@@ -108,9 +108,8 @@ function Get_Gpu_Information{
 }
 
 function Get_Monitor_Infotmation{
-    $Monitor_ManufacturerName_Ascii_Count = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName).count;
-    $Monitor_Model_Ascii_Count = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).UserFriendlyName).count;
-    if ($Monitor_ManufacturerName_Ascii_Count -eq 16){
+    $Monitor_Count = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).Active).count;
+    if ($Monitor_Count -eq 1){
         "显示器信息：";
         "Monitor0";
         $Monitor_ManufacturerName = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName | ForEach {[char]$_}) -join "";
@@ -118,24 +117,14 @@ function Get_Monitor_Infotmation{
         $Monitor_ManufacturerName;
         $Monitor_Model;
     }
-    elseif ($Monitor_ManufacturerName_Ascii_Count -gt 16) {
+    else{
         "显示器信息：";
-        $Monitor_Count = 2
-        $Monitor_Count_ManufacturerName_Begin = 0;
-        $Monitor_Count_ManufacturerName_Last = ($Monitor_ManufacturerName_Ascii_Count/$Monitor_Count)-1;
-        $Monitor_Count_Model_Begin = 0;
-        $Monitor_Count_Model_Last = ($Monitor_Model_Ascii_Count/$Monitor_Count)-1;
         for($i=0;$i -le $Monitor_Count-1;$i++){    
-            $Monitor_ManufacturerName =((Get-WmiObject WmiMonitorID -Namespace root\wmi).ManufacturerName[$Monitor_Count_ManufacturerName_Begin..$Monitor_Count_ManufacturerName_Last] | ForEach {[char]$_}) -join "";
-            $Monitor_Model = ((Get-WmiObject WmiMonitorID -Namespace root\wmi).UserFriendlyName[$Monitor_Count_Model_Begin..$Monitor_Count_Model_Last] | ForEach {[char]$_}) -join "";
+            $Monitor_ManufacturerName =((Get-WmiObject WmiMonitorID -Namespace root\wmi)[$i].ManufacturerName | ForEach {[char]$_}) -join "";
+            $Monitor_Model = ((Get-WmiObject WmiMonitorID -Namespace root\wmi)[$i].UserFriendlyName | ForEach {[char]$_}) -join "";
             "Monitor$i";
             $Monitor_ManufacturerName;
             $Monitor_Model;
-            $Monitor_Count_ManufacturerName_Begin = $Monitor_Count_ManufacturerName_Last+1;
-            $Monitor_Count_ManufacturerName_Last = $Monitor_ManufacturerName_Ascii_Count;
-            $Monitor_Count_Model_Begin = $Monitor_Count_Model_Last+1;
-            $Monitor_Count_Model_Last = $Monitor_Model_Ascii_Count;
-
         }
     }
 }
